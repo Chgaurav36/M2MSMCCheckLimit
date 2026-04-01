@@ -120,11 +120,11 @@ export default function SMCLimit() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition">
+    <div className={`min-h-screen bg-gray-50 border  ${dark ? "dark:bg-gray-900" : ""} transition`}>
       
       {/* Navbar */}
-      <div className="flex justify-between items-center px-6 py-4 border-b dark:border-gray-700">
-        <h1 className="text-lg font-bold text-gray-800 dark:text-white">
+      <div className={`flex justify-between items-center px-6 py-4 border-b ${dark ? "dark:border-gray-700" : ""}`}>
+        <h1 className={`text-lg font-bold text-gray-800 ${dark ? "text-white" : ""}`}>
           💳 CUID Dashboard
         </h1>
 
@@ -132,7 +132,7 @@ export default function SMCLimit() {
           {/* Dark Mode Toggle */}
           <button
             onClick={() => setDark(!dark)}
-            className="px-3 py-1 rounded-lg bg-gray-200 dark:bg-gray-700 text-sm"
+            className={`px-3 py-1 rounded-lg cursor-pointer ${dark ? "bg-gray-700 text-white" : "bg-gray-200 text-gray-800"} text-sm`}
           >
             {dark ? "☀️ Light" : "🌙 Dark"}
           </button>
@@ -140,7 +140,7 @@ export default function SMCLimit() {
           {/* Logout */}
           <button
             onClick={handleLogout}
-            className="px-3 py-1 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm"
+            className="px-3 py-1 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm cursor-pointer"
           >
             Logout
           </button>
@@ -149,14 +149,14 @@ export default function SMCLimit() {
 
       {/* Main Content */}
       <div className="flex items-center justify-center p-6">
-        <div className="w-full max-w-lg bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-8">
+        <div className={`w-full max-w-lg border  ${dark ? "dark:bg-gray-800 dark:border-gray-600" : ""} shadow-xl rounded-2xl p-8`}>
           
           {/* Header */}
           <div className="mb-6 text-center">
-            <h2 className="text-xl font-bold text-gray-800 dark:text-white">
+            <h2 className={`text-xl font-bold ${dark ? "text-white" : "text-gray-800"}`}>
               Check Available Limit
             </h2>
-            <p className="text-gray-500 text-sm dark:text-gray-400">
+            <p className={`text-gray-500 text-sm ${dark ? "dark:text-gray-400" : ""}`}>
               Enter party code to fetch data
             </p>
           </div>
@@ -167,7 +167,7 @@ export default function SMCLimit() {
             placeholder="Enter Party Code"
             value={partyCode}
             onChange={(e) => setPartyCode(e.target.value)}
-            className="w-full border dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-white p-2 rounded-lg mb-4 outline-none focus:ring-2 focus:ring-blue-500"
+            className={`w-full border ${dark ? "dark:border-gray-600" : ""} bg-white ${dark ? "dark:bg-gray-700" : ""} ${dark ? "dark:text-white" : ""} p-2 rounded-lg mb-4 outline-none focus:ring-2 focus:ring-blue-500`}
           />
 
           {/* Error */}
@@ -185,15 +185,15 @@ export default function SMCLimit() {
 
           {/* Result */}
           {result && (
-            <div className="mt-6 bg-gray-50 dark:bg-gray-700 rounded-xl p-5">
+            <div className={`mt-6 bg-gray-50 ${dark ? "dark:bg-gray-700" : ""} rounded-xl p-5`}>
               
-              <div className="flex justify-between mb-2 text-gray-700 dark:text-gray-200">
+              <div className={`flex justify-between mb-2 ${dark ? "text-gray-200" : "text-gray-700"}`}>
                 <span>Party ID</span>
                 <span className="font-medium">{result.PartyId}</span>
               </div>
 
               <div className="flex justify-between text-lg">
-                <span className="text-gray-600 dark:text-gray-300">
+                <span className={`text-gray-600 ${dark ? "dark:text-gray-300" : ""}`}>
                   Available Limit
                 </span>
                 <span className="font-bold text-green-500">
@@ -203,7 +203,7 @@ export default function SMCLimit() {
 
               {/* Progress Bar */}
               <div className="mt-4">
-                <div className="h-2 bg-gray-300 dark:bg-gray-600 rounded-full">
+                <div className={`h-2 bg-gray-300 ${dark ? "dark:bg-gray-600" : ""} rounded-full`}>
                   <div
                     className="h-2 bg-blue-600 rounded-full"
                     style={{
@@ -221,7 +221,7 @@ export default function SMCLimit() {
 
           {/* Update Password Section */}
           <div className="mt-8 border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">Update Password</h3>
+            <h3 className={`text-lg font-semibold ${dark ? "text-gray-100" : "text-gray-800"} mb-3`}>Update Password</h3>
 
             {updateError && (
               <div className="text-red-500 text-sm mb-2">{updateError}</div>
@@ -235,7 +235,7 @@ export default function SMCLimit() {
               placeholder="Current Password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full border dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-white p-2 rounded-lg mb-3 outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full border ${dark ? "dark:border-gray-600" : ""} bg-white ${dark ? "dark:bg-gray-700" : ""} ${dark ? "dark:text-white" : ""} p-2 rounded-lg mb-3 outline-none focus:ring-2 focus:ring-blue-500`}
             />
 
             <input
@@ -243,7 +243,7 @@ export default function SMCLimit() {
               placeholder="New Password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full border dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-white p-2 rounded-lg mb-3 outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full border ${dark ? "dark:border-gray-600" : ""} bg-white ${dark ? "dark:bg-gray-700" : ""} ${dark ? "dark:text-white" : ""} p-2 rounded-lg mb-3 outline-none focus:ring-2 focus:ring-blue-500`}
             />
 
             <input
@@ -251,12 +251,12 @@ export default function SMCLimit() {
               placeholder="Confirm New Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full border dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-white p-2 rounded-lg mb-4 outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full border ${dark ? "dark:border-gray-600" : ""} bg-white ${dark ? "dark:bg-gray-700" : ""} ${dark ? "dark:text-white" : ""} p-2 rounded-lg mb-4 outline-none focus:ring-2 focus:ring-blue-500`}
             />
 
             <button
               onClick={handleUpdatePassword}
-              className="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg transition"
+              className={`w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg transition`}
             >
               Update Password
             </button>
