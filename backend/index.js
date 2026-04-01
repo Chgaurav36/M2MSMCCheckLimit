@@ -1,6 +1,6 @@
 import express from "express";
 import sql from "mssql";
-import bcrypt from "bcrypt";
+//import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -14,7 +14,7 @@ app.use(cors());
 // ✅ SQL SERVER CONFIG
 const config = {
   user: "sa",
-  password: "Money2Me@123",   
+  password: "YouAreCaughtSayHelloToMyASS",   
   server: "123.108.43.250",
   port: 14330,                 
   database: "Money2Me",
@@ -104,12 +104,12 @@ app.post("/signup", async (req, res) => {
     }
 
     // 🔐 Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    //const hashedPassword = await bcrypt.hash(password, 10);
 
     // Insert
     await pool.request()
       .input("FullName", sql.NVarChar, fullName)
-      .input("Password", sql.NVarChar, hashedPassword)
+      .input("Password", sql.NVarChar, password) // Store plain password (not recommended)
       .query(`
         INSERT INTO SMCUsers (FullName, Password, IsActive, CreatedAt)
         VALUES (@FullName, @Password, 1, GETDATE())
@@ -146,9 +146,9 @@ app.post("/login", async (req, res) => {
     }
 
     // 🔐 Compare password
-    const isMatch = await bcrypt.compare(password, user.Password);
+    //const isMatch = await bcrypt.compare(password, user.Password);
 
-    if (!isMatch) {
+    if (password !== user.Password) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
@@ -206,16 +206,16 @@ app.put("/update-password", verifyToken, async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const match = await bcrypt.compare(currentPassword, user.Password);
-    if (!match) {
+    //const match = await bcrypt.compare(currentPassword, user.Password);
+    if (currentPassword !== user.Password) {
       return res.status(401).json({ message: "Current password is incorrect" });
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    //const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     await pool.request()
       .input("UserId", sql.Int, userId)
-      .input("NewPassword", sql.NVarChar, hashedPassword)
+      .input("NewPassword", sql.NVarChar, newPassword) // Store plain password (not recommended)
       .query(`UPDATE SMCusers SET Password = @NewPassword WHERE UserId = @UserId`);
 
     res.json({ message: "Password updated successfully" });
