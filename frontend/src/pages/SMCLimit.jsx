@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+
 export default function SMCLimit() {
   const [partyCode, setPartyCode] = useState("");
   const [result, setResult] = useState(null);
@@ -48,6 +49,7 @@ export default function SMCLimit() {
       const data = await res.json();
 
       if (data.success) {
+        
         setResult(data.data);
       } else {
         setError(data.message);
@@ -59,6 +61,7 @@ export default function SMCLimit() {
       setLoading(false);
     }
   };
+console.log(result)
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -144,6 +147,12 @@ export default function SMCLimit() {
           >
             Logout
           </button>
+          <button
+              onClick={() => navigate("/compliancereport")}
+            className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-fuchsia-500 text-white text-sm cursor-pointer"
+          >
+            Spurious Data
+          </button>
         </div>
       </div>
 
@@ -192,6 +201,11 @@ export default function SMCLimit() {
                 <span className="font-medium">{result.PartyId}</span>
               </div>
 
+              <div className={`flex justify-between mb-2 ${dark ? "text-gray-200" : "text-gray-700"}`}>
+                <span>Party Name</span>
+                <span className="font-medium">{result.PartyName}</span>
+              </div>
+
               <div className="flex justify-between text-lg">
                 <span className={`text-gray-600 ${dark ? "dark:text-gray-300" : ""}`}>
                   Available Limit
@@ -233,6 +247,7 @@ export default function SMCLimit() {
             <input
               type="password"
               placeholder="Current Password"
+              autoComplete="off"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
               className={`w-full border ${dark ? "dark:border-gray-600" : ""} bg-white ${dark ? "dark:bg-gray-700" : ""} ${dark ? "dark:text-white" : ""} p-2 rounded-lg mb-3 outline-none focus:ring-2 focus:ring-blue-500`}

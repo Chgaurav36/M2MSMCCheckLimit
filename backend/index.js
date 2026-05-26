@@ -14,7 +14,7 @@ app.use(cors());
 // ✅ SQL SERVER CONFIG
 const config = {
   user: "sa",
-  password: "YouAreCaughtSayHelloToMyASS",   
+  password: "hahahahahahahahahahaha",   
   server: "123.108.43.250",
   port: 14330,                 
   database: "Money2Me",
@@ -265,6 +265,70 @@ app.post("/api/cuid-limit", async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server Error",
+    });
+  }
+});
+
+
+app.post("/api/compliance-report", async (req, res) => {
+  try {
+    const { loanid } = req.body;
+
+    if (!loanid) {
+      return res.status(400).json({ message: "Loan ID is required" });
+    }
+
+    const pool = await sql.connect(config);
+
+    const result = await pool.request()
+      .input("LoanId", sql.Int, loanid)
+      .execute("sp_GetComplianceReport_ByLoanId");
+
+    res.json({
+      success: true,
+      data: result.recordset[0],
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+});
+
+app.post("/api/loan-interest-receipt", async (req, res) => {
+  try {
+    const { loanid, actionName = "SpuriousData", partyid = null } = req.body;
+
+    if (!loanid) {
+      return res.status(400).json({
+        success: false,
+        message: "Loan ID is required"
+      });
+    }
+
+    const pool = await sql.connect(config);
+
+    const result = await pool.request()
+      .input("Action", sql.NVarChar(50), actionName)
+      .input("LoanID", sql.Int, loanid)
+      .input("PartyID", sql.Int, partyid)
+      .execute("USP_GetLoanInterestReceiptDetails");
+
+    res.json({
+      success: true,
+      loanDetails: result.recordsets[0],
+      receiptDetails: result.recordsets[1],
+    });
+
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: err.message || "Server Error",
     });
   }
 });

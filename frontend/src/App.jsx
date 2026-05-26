@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import Signup from "./pages/SignUp";
 import SMCLimit from "./pages/SMCLimit";
+import ComplianceReport from "./pages/ComplianceReport";
 
 function App() {
   const [users, setUsers] = useState([]);
@@ -48,6 +49,7 @@ return(
     <Routes>
       <Route path="/" element={<Signup />} />
       <Route path="/smclimit" element={<SMCLimit />} />
+      <Route path="/compliancereport" element={<ComplianceReport />} />
     </Routes>
   </Router>
 )
