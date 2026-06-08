@@ -36,7 +36,6 @@ function App() {
 useEffect(() => {
   axios.get("/css")
     .then((res) => {
-      console.log("API Response:", res.data);
       setCss(res.data?.[0] ?? {});
     })
     .catch((err) => {

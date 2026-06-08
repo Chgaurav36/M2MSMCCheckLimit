@@ -11,26 +11,26 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// ✅ SQL SERVER CONFIG
+//  SQL SERVER CONFIG
 const config = {
   user: "sa",
-  password: "hahahahahahahahahahaha",   
+  password: "hahahahaha",
   server: "123.108.43.250",
-  port: 14330,                 
+  port: 14330,
   database: "Money2Me",
   options: {
     encrypt: false,
-    trustServerCertificate: true
-  }
+    trustServerCertificate: true,
+  },
 };
 
-// ✅ CONNECT TO DATABASE
-sql.connect(config)
-  .then(() => console.log("✅ SQL Server Connected"))
-  .catch(err => console.log("❌ DB Error:", err));
+//  CONNECT TO DATABASE
+sql
+  .connect(config)
+  .then(() => console.log(" SQL Server Connected"))
+  .catch((err) => console.log(" DB Error:", err));
 
-
-// ✅ SAMPLE API GET SMCUsers
+//  SAMPLE API GET SMCUsers
 // app.get("/user", async (req, res) => {
 //   try {
 //     const result = await sql.query("SELECT * from userdetails order by UserID");
@@ -83,7 +83,7 @@ app.post("/signup", async (req, res) => {
   try {
     const { fullName, password } = req.body;
 
-    // ✅ Validation
+    //  Validation
     if (!fullName || !password) {
       return res.status(400).json({ message: "All fields required" });
     }
@@ -95,7 +95,8 @@ app.post("/signup", async (req, res) => {
     const pool = await sql.connect(config);
 
     // Check existing user
-    const existingUser = await pool.request()
+    const existingUser = await pool
+      .request()
       .input("FullName", sql.NVarChar, fullName)
       .query(`SELECT UserId FROM SMCUsers WHERE FullName = @FullName`);
 
@@ -103,11 +104,12 @@ app.post("/signup", async (req, res) => {
       return res.status(409).json({ message: "User already exists" });
     }
 
-    // 🔐 Hash password
+    //  Hash password
     //const hashedPassword = await bcrypt.hash(password, 10);
 
     // Insert
-    await pool.request()
+    await pool
+      .request()
       .input("FullName", sql.NVarChar, fullName)
       .input("Password", sql.NVarChar, password) // Store plain password (not recommended)
       .query(`
@@ -116,13 +118,11 @@ app.post("/signup", async (req, res) => {
       `);
 
     res.status(201).json({ message: "User created successfully" });
-
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 });
-
 
 // ================= LOGIN =================
 app.post("/login", async (req, res) => {
@@ -135,9 +135,12 @@ app.post("/login", async (req, res) => {
 
     const pool = await sql.connect(config);
 
-    const result = await pool.request()
+    const result = await pool
+      .request()
       .input("FullName", sql.NVarChar, fullName)
-      .query(`SELECT * FROM SMCUsers WHERE FullName = @FullName AND IsActive = 1`);
+      .query(
+        `SELECT * FROM SMCUsers WHERE FullName = @FullName AND IsActive = 1`,
+      );
 
     const user = result.recordset[0];
 
@@ -145,18 +148,18 @@ app.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // 🔐 Compare password
+    //  Compare password
     //const isMatch = await bcrypt.compare(password, user.Password);
 
     if (password !== user.Password) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // 🔑 Generate JWT
+    //  Generate JWT
     const token = jwt.sign(
       { userId: user.UserId, fullName: user.FullName },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "1d" },
     );
 
     res.json({
@@ -164,16 +167,14 @@ app.post("/login", async (req, res) => {
       token,
       user: {
         userId: user.UserId,
-        fullName: user.FullName
-      }
+        fullName: user.FullName,
+      },
     });
-
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 });
-
 
 // ================= PROTECTED ROUTE =================
 app.get("/profile", verifyToken, (req, res) => {
@@ -187,18 +188,25 @@ app.put("/update-password", verifyToken, async (req, res) => {
     const { userId } = req.user;
 
     if (!currentPassword || !newPassword) {
-      return res.status(400).json({ message: "Current and new passwords are required" });
+      return res
+        .status(400)
+        .json({ message: "Current and new passwords are required" });
     }
 
     if (newPassword.length < 6) {
-      return res.status(400).json({ message: "New password must be at least 6 characters" });
+      return res
+        .status(400)
+        .json({ message: "New password must be at least 6 characters" });
     }
 
     const pool = await sql.connect(config);
 
-    const userResult = await pool.request()
+    const userResult = await pool
+      .request()
       .input("UserId", sql.Int, userId)
-      .query(`SELECT Password FROM SMCusers WHERE UserId = @UserId AND IsActive = 1`);
+      .query(
+        `SELECT Password FROM SMCusers WHERE UserId = @UserId AND IsActive = 1`,
+      );
 
     const user = userResult.recordset[0];
 
@@ -213,13 +221,15 @@ app.put("/update-password", verifyToken, async (req, res) => {
 
     //const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    await pool.request()
+    await pool
+      .request()
       .input("UserId", sql.Int, userId)
       .input("NewPassword", sql.NVarChar, newPassword) // Store plain password (not recommended)
-      .query(`UPDATE SMCusers SET Password = @NewPassword WHERE UserId = @UserId`);
+      .query(
+        `UPDATE SMCusers SET Password = @NewPassword WHERE UserId = @UserId`,
+      );
 
     res.json({ message: "Password updated successfully" });
-
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
@@ -251,7 +261,8 @@ app.post("/api/cuid-limit", async (req, res) => {
 
     const pool = await sql.connect(config);
 
-    const result = await pool.request()
+    const result = await pool
+      .request()
       .input("PartyCode", sql.VarChar, partyCode)
       .execute("sp_GetAvailableCuidLimit_ByPartyCode");
 
@@ -259,7 +270,6 @@ app.post("/api/cuid-limit", async (req, res) => {
       success: true,
       data: result.recordset[0],
     });
-
   } catch (err) {
     console.error(err);
     res.status(500).json({
@@ -269,34 +279,33 @@ app.post("/api/cuid-limit", async (req, res) => {
   }
 });
 
+// app.post("/api/compliance-report", async (req, res) => {
+//   try {
+//     const { loanid } = req.body;
 
-app.post("/api/compliance-report", async (req, res) => {
-  try {
-    const { loanid } = req.body;
+//     if (!loanid) {
+//       return res.status(400).json({ message: "Loan ID is required" });
+//     }
 
-    if (!loanid) {
-      return res.status(400).json({ message: "Loan ID is required" });
-    }
+//     const pool = await sql.connect(config);
 
-    const pool = await sql.connect(config);
+//     const result = await pool
+//       .request()
+//       .input("LoanId", sql.Int, loanid)
+//       .execute("sp_GetComplianceReport_ByLoanId");
 
-    const result = await pool.request()
-      .input("LoanId", sql.Int, loanid)
-      .execute("sp_GetComplianceReport_ByLoanId");
-
-    res.json({
-      success: true,
-      data: result.recordset[0],
-    });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
-  }
-});
+//     res.json({
+//       success: true,
+//       data: result.recordset[0],
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({
+//       success: false,
+//       message: "Server Error",
+//     });
+//   }
+// });
 
 app.post("/api/loan-interest-receipt", async (req, res) => {
   try {
@@ -305,13 +314,14 @@ app.post("/api/loan-interest-receipt", async (req, res) => {
     if (!loanid) {
       return res.status(400).json({
         success: false,
-        message: "Loan ID is required"
+        message: "Loan ID is required",
       });
     }
 
     const pool = await sql.connect(config);
 
-    const result = await pool.request()
+    const result = await pool
+      .request()
       .input("Action", sql.NVarChar(50), actionName)
       .input("LoanID", sql.Int, loanid)
       .input("PartyID", sql.Int, partyid)
@@ -322,6 +332,9 @@ app.post("/api/loan-interest-receipt", async (req, res) => {
       loanDetails: result.recordsets[0],
       receiptDetails: result.recordsets[1],
     });
+
+
+    
 
   } catch (err) {
     console.error(err);
@@ -334,5 +347,5 @@ app.post("/api/loan-interest-receipt", async (req, res) => {
 });
 
 app.listen(process.env.PORT, () =>
-  console.log(`Server running on ${process.env.PORT}`)
+  console.log(`Server running on ${process.env.PORT}`),
 );

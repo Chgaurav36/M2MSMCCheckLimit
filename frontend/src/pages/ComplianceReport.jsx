@@ -18,21 +18,26 @@ const ComplianceReport = () => {
     setResult(null);
 
     try {
-      const response = await fetch("http://localhost:5000/api/loan-interest-receipt", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "http://localhost:5000/api/loan-interest-receipt",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            loanid: Number(loanId),
+            partyid: partyId ? Number(partyId) : null,
+          }),
         },
-        body: JSON.stringify({
-        loanid: Number(loanId),
-        partyid: partyId ? Number(partyId) : null,
-      }),
-      });
+      );
 
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        setError(data.message || "Unable to fetch loan interest receipt details.");
+        setError(
+          data.message || "Unable to fetch loan interest receipt details.",
+        );
         return;
       }
 
@@ -48,6 +53,7 @@ const ComplianceReport = () => {
     }
   };
 
+
   const csvEscape = (value) => {
     if (value === null || value === undefined) {
       return "";
@@ -55,7 +61,11 @@ const ComplianceReport = () => {
 
     const stringValue = String(value);
 
-    if (stringValue.includes("\n") || stringValue.includes(",") || stringValue.includes('"')) {
+    if (
+      stringValue.includes("\n") ||
+      stringValue.includes(",") ||
+      stringValue.includes('"')
+    ) {
       return `"${stringValue.replace(/"/g, '""')}"`;
     }
 
@@ -99,7 +109,10 @@ const ComplianceReport = () => {
   const renderTable = (rows, index) => {
     if (!rows || rows.length === 0) {
       return (
-        <div key={index} className="rounded-2xl border border-gray-200 bg-white p-4 mb-6">
+        <div
+          key={index}
+          className="rounded-2xl border border-gray-200 bg-white p-4 mb-6"
+        >
           <div className="font-semibold mb-2">Result set {index + 1}</div>
           <div className="text-sm text-gray-500">No rows returned.</div>
         </div>
@@ -107,16 +120,23 @@ const ComplianceReport = () => {
     }
 
     const headers = Object.keys(rows[0]);
+    
 
     return (
-      <div key={index} className="rounded-2xl border border-gray-200 bg-white p-4 mb-6">
+      <div
+        key={index}
+        className="rounded-2xl border border-gray-200 bg-red-100 p-4 mb-6"
+      >
         <div className="font-semibold mb-3">Result set {index + 1}</div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 text-sm text-left">
             <thead className="bg-gray-100">
               <tr>
                 {headers.map((header) => (
-                  <th key={header} className="px-3 py-2 font-medium text-gray-700">
+                  <th
+                    key={header}
+                    className="px-3 py-2 font-medium text-gray-700"
+                  >
                     {header}
                   </th>
                 ))}
@@ -124,14 +144,15 @@ const ComplianceReport = () => {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {rows.map((row, rowIndex) => (
-                <tr key={rowIndex} className={rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                <tr
+                  key={rowIndex}
+                  className={rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                >
                   {headers.map((header) => (
                     <td key={header} className="px-3 py-2 text-gray-700">
-                      {
-  header.toLowerCase().includes("date")
-    ? new Date(row[header]).toLocaleDateString("en-GB")
-    : row[header] ?? ""
-}
+                      {header.toLowerCase().includes("date")
+                        ? new Date(row[header]).toLocaleDateString("en-GB")
+                        : (row[header] ?? "")}
                     </td>
                   ))}
                 </tr>
@@ -145,14 +166,18 @@ const ComplianceReport = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-5xl mx-auto bg-white rounded-3xl p-8 shadow-xl">
-        <h1 className="text-2xl font-bold mb-2">Loan Interest Receipt Details</h1>
+      <div className="max-w-screen mx-auto bg-green-200 rounded-3xl p-8 shadow-xl">
+        <h1 className="text-2xl font-bold mb-2">
+          Loan Interest Receipt Details
+        </h1>
         {/* <p className="text-sm text-gray-500 mb-6">
           This page calls <code>USP_GetLoanInterestReceiptDetails</code> with <strong>ActionName=&quot;SpuriousData&quot;</strong> and the provided Loan ID.
         </p> */}
 
         <div className="space-y-4">
-          <label className="block text-sm font-medium text-gray-700">Loan ID</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Loan ID
+          </label>
           <input
             type="number"
             value={loanId}
@@ -160,17 +185,21 @@ const ComplianceReport = () => {
             placeholder="Enter Loan ID"
             className="w-full rounded-xl border border-gray-300 p-3 focus:border-blue-500 focus:outline-none"
           />
-
-          <label className="block text-sm font-medium text-gray-700">Party ID (optional)</label>
+          {/* Removed this option as per latest backend changes */}
+          {/* <label className="block text-sm font-medium text-gray-700">Party ID (optional)</label>
           <input
             type="number"
             value={partyId}
             onChange={(e) => setPartyId(e.target.value)}
             placeholder="Enter Party ID"
             className="w-full rounded-xl border border-gray-300 p-3 focus:border-blue-500 focus:outline-none"
-          />
+          /> */}
 
-          {error && <div className="rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-700">{error}</div>}
+          {error && (
+            <div className="rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-700">
+              {error}
+            </div>
+          )}
 
           <button
             type="button"
